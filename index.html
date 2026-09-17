@@ -1,12 +1,33 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>AI Code Review & Vulnerability Detection Agent</title>
-<style>
-body{
-background:#0f172a;color:white;font-family:Arial;margin:0;padding:0}
-header{text-align:center;padding:40px;background:linear-gradient(90deg,#2563eb,#7c3aed)}
-.container{padding:20px;max-width:900px;margin:auto}
-textarea{width:100%;height:220px;background:#1e293b;color:white;border:1px solid #3b82f6;border-radius:10
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Code Review Agent</title>
+</head>
+<body style="background:#0f172a;color:white;font-family:Arial;text-align:center;padding:30px;">
+
+<h1>AI Code Review & Vulnerability Detection Agent</h1>
+<p>Paste your code below and click Analyze.</p>
+
+<textarea id="code" style="width:90%;height:180px;"></textarea><br><br>
+
+<button onclick="analyze()">Analyze Code</button>
+
+<div id="result" style="margin-top:20px;"></div>
+
+<script>
+function analyze(){
+ let code=document.getElementById("code").value;
+ let text="No issues found.";
+
+ if(code.includes("password")) text="🔴 Critical: Hardcoded password detected.";
+ else if(code.includes("gets(")) text="🔴 Critical: Unsafe gets() detected.";
+ else if(code.toLowerCase().includes("select")) text="🟠 High: Possible SQL Injection risk.";
+
+ document.getElementById("result").innerHTML=text;
+}
+</script>
+
+</body>
+</html>
