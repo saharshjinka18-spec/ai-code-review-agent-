@@ -6,55 +6,91 @@
 <title>AI Code Review & Vulnerability Detection Agent</title>
 
 <style>
-*{margin:0;padding:0;box-sizing:border-box;}
+*{margin:0;padding:0;box-sizing:border-box}
 body{
 font-family:Arial,sans-serif;
-background:#0b1120;
+background:#08111f;
 color:white;
 }
 header{
 background:linear-gradient(135deg,#2563eb,#7c3aed);
-padding:50px 20px;
+padding:45px 20px;
 text-align:center;
 }
-.container{max-width:900px;margin:auto;padding:20px;}
+header h1{font-size:30px}
+header p{margin-top:10px;color:#e5e7eb}
+
+.container{max-width:950px;margin:auto;padding:20px}
+
 .card{
-background:#172033;
+background:#111c2f;
 padding:20px;
-border-radius:16px;
-margin:20px 0;
-box-shadow:0 0 15px rgba(59,130,246,.3);
+border-radius:18px;
+margin:18px 0;
+box-shadow:0 0 20px rgba(59,130,246,.2);
 }
+
 textarea{
 width:100%;
-height:220px;
-background:#0f172a;
+height:230px;
+background:#0b1528;
 color:white;
 border:1px solid #3b82f6;
-border-radius:10px;
-padding:10px;
+border-radius:12px;
+padding:12px;
+font-size:15px;
 }
+
 button{
-margin-top:15px;
-padding:12px 24px;
+padding:12px 22px;
+margin-top:12px;
+border:none;
+border-radius:10px;
 background:linear-gradient(90deg,#2563eb,#7c3aed);
 color:white;
-border:none;
-border-radius:8px;
-font-size:16px;
+font-size:15px;
+cursor:pointer;
 }
+
+button:hover{opacity:.9}
+
+.drop{
+border:2px dashed #3b82f6;
+padding:25px;
+border-radius:12px;
+text-align:center;
+margin:15px 0;
+color:#cbd5e1;
+}
+
 .features{
 display:grid;
-grid-template-columns:repeat(auto-fit,minmax(160px,1fr));
+grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
 gap:12px;
 margin-top:15px;
 }
+
 .feature{
-background:#0f172a;
+background:#0b1528;
 padding:15px;
 border-radius:10px;
 text-align:center;
 }
+
+.dashboard{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(110px,1fr));
+gap:10px;
+margin-top:15px;
+}
+
+.stat{
+background:#0b1528;
+padding:15px;
+border-radius:10px;
+text-align:center;
+}
+
 .badge{
 display:inline-block;
 padding:4px 10px;
@@ -62,16 +98,40 @@ border-radius:20px;
 font-size:12px;
 margin-bottom:5px;
 }
-.critical{background:#dc2626;}
-.high{background:#ea580c;}
-.medium{background:#ca8a04;}
-.low{background:#16a34a;}
-#score{
-font-size:24px;
+
+.critical{background:#dc2626}
+.high{background:#ea580c}
+.medium{background:#ca8a04}
+.low{background:#16a34a}
+
+#loading{
+display:none;
 margin-top:15px;
 color:#60a5fa;
-font-weight:bold;
 }
+
+.spinner{
+display:inline-block;
+width:18px;
+height:18px;
+border:3px solid #555;
+border-top:3px solid #60a5fa;
+border-radius:50%;
+animation:spin 1s linear infinite;
+margin-right:8px;
+}
+
+@keyframes spin{
+100%{transform:rotate(360deg)}
+}
+
+#score{
+font-size:24px;
+font-weight:bold;
+color:#60a5fa;
+margin-top:15px;
+}
+
 footer{
 text-align:center;
 padding:25px;
@@ -84,19 +144,34 @@ color:#94a3b8;
 
 <header>
 <h1>🤖 AI Code Review & Vulnerability Detection Agent</h1>
-<p>Analyze source code and detect bugs, vulnerabilities, and code smells with AI.</p>
+<p>Analyze code, detect bugs, security vulnerabilities and code smells with AI-powered insights.</p>
 </header>
 
 <div class="container">
 
 <div class="card">
+
 <h2>Source Code Input</h2>
-<textarea id="codeInput" placeholder="Paste Python, C, C++, Java or JavaScript code here..."></textarea>
-<button onclick="analyzeCode()">Analyze Code</button>
+
+<div class="drop">
+<input type="file" id="fileInput" accept=".py,.c,.cpp,.java,.js" onchange="loadFile()">
+<p>or drag and drop your file here (demo)</p>
+</div>
+
+<textarea id="codeInput" placeholder="Paste your code here..."></textarea>
+
+<button onclick="analyzeCode()">🚀 Analyze Code</button>
+
+<div id="loading">
+<span class="spinner"></span>AI is analyzing your code...
+</div>
+
 </div>
 
 <div class="card">
-<h2>Features</h2>
+
+<h2>Key Features</h2>
+
 <div class="features">
 <div class="feature">🐞 Bug Detection</div>
 <div class="feature">🔒 Security Scan</div>
@@ -105,51 +180,193 @@ color:#94a3b8;
 <div class="feature">💡 AI Explanation</div>
 <div class="feature">✅ Suggested Fixes</div>
 </div>
+
 </div>
 
 <div class="card">
-<h2>Analysis Results</h2>
-<div id="results">No analysis yet.</div>
-<div id="score"></div>
+
+<h2>Dashboard</h2>
+
+<div class="dashboard">
+
+<div class="stat">
+<h3 id="total">0</h3>
+<p>Total</p>
+</div>
+
+<div class="stat">
+<h3 id="criticalCount">0</h3>
+<p>Critical</p>
+</div>
+
+<div class="stat">
+<h3 id="highCount">0</h3>
+<p>High</p>
+</div>
+
+<div class="stat">
+<h3 id="mediumCount">0</h3>
+<p>Medium</p>
+</div>
+
+<div class="stat">
+<h3 id="lowCount">0</h3>
+<p>Low</p>
 </div>
 
 </div>
 
-<footer>Hackathon Project • AI Code Review Assistant</footer>
+<div id="score">Code Health Score: 100/100</div>
+
+</div>
+
+<div class="card">
+
+<h2>AI Analysis Results</h2>
+
+<div id="results">
+No analysis yet.
+</div>
+
+<button onclick="downloadReport()">⬇ Download Report</button>
+
+</div>
+
+<div class="card">
+
+<h2>How It Works</h2>
+
+<ol style="padding-left:20px;line-height:1.8">
+<li>Upload or paste source code.</li>
+<li>AI detects bugs and vulnerabilities.</li>
+<li>Issues are classified by severity.</li>
+<li>Suggested fixes improve code quality.</li>
+</ol>
+
+</div>
+
+</div>
+
+<footer>
+Hackathon Project • AI Code Review Assistant
+</footer>
 
 <script>
+let reportText="No report yet.";
+
+function loadFile(){
+
+const file=document.getElementById("fileInput").files[0];
+
+if(!file)return;
+
+const reader=new FileReader();
+
+reader.onload=function(e){
+document.getElementById("codeInput").value=e.target.result;
+};
+
+reader.readAsText(file);
+
+}
+
 function analyzeCode(){
-let code=document.getElementById("codeInput").value;
+
+const code=document.getElementById("codeInput").value;
+
+document.getElementById("loading").style.display="block";
+
+setTimeout(()=>{
+
 let result="";
 let score=100;
 
-if(code.includes("password")){
-result+='<p><span class="badge critical">Critical</span> Hardcoded password detected. Use environment variables.</p>';
-score-=40;
+let critical=0,high=0,medium=0,low=0,total=0;
+
+let language="Unknown";
+
+if(code.includes("#include"))language="C/C++";
+else if(code.includes("public static void main"))language="Java";
+else if(code.includes("def "))language="Python";
+else if(code.includes("function")||code.includes("const ")||code.includes("let "))language="JavaScript";
+
+function add(level,title,fix){
+
+total++;
+
+if(level==="critical"){critical++;score-=35;}
+if(level==="high"){high++;score-=25;}
+if(level==="medium"){medium++;score-=15;}
+if(level==="low"){low++;score-=8;}
+
+result+=`<p><span class="badge ${level}">${level.toUpperCase()}</span><br><b>${title}</b><br>${fix}</p><br>`;
 }
-if(code.toLowerCase().includes("select")){
-result+='<p><span class="badge high">High</span> Possible SQL Injection. Use prepared statements.</p>';
-score-=30;
-}
-if(code.includes("gets(")){
-result+='<p><span class="badge critical">Critical</span> Unsafe gets() detected. Use fgets().</p>';
-score-=30;
-}
-if(code.includes("var ")){
-result+='<p><span class="badge medium">Medium</span> Replace var with let or const.</p>';
-score-=15;
-}
-if(code.includes("printf")){
-result+='<p><span class="badge low">Low</span> Validate user input properly.</p>';
-score-=10;
-}
+
+if(code.includes("password"))
+add("critical","Hardcoded Password","Move secrets to environment variables.");
+
+if(code.toLowerCase().includes("select"))
+add("high","Possible SQL Injection","Use prepared statements.");
+
+if(code.includes("gets("))
+add("critical","Unsafe gets()","Replace with fgets().");
+
+if(code.includes("strcpy("))
+add("high","Buffer Overflow Risk","Use strncpy().");
+
+if(code.includes("eval("))
+add("high","Dangerous eval()","Avoid executing user input.");
+
+if(code.includes("var "))
+add("medium","Use let/const","Modern JavaScript recommends let or const.");
+
+if(code.includes("printf"))
+add("low","Input Validation","Validate user input.");
 
 if(result===""){
-result="<p>✅ No obvious demo issues found.</p>";
+result="<p>✅ No obvious demo issues detected.</p>";
 }
 
-document.getElementById("results").innerHTML=result;
-document.getElementById("score").innerHTML="Code Health Score: "+Math.max(score,0)+"/100";
+document.getElementById("results").innerHTML=`<p><b>Detected Language:</b> ${language}</p><br>`+result;
+
+document.getElementById("score").innerHTML=`Code Health Score: ${Math.max(score,0)}/100`;
+
+document.getElementById("total").innerText=total;
+document.getElementById("criticalCount").innerText=critical;
+document.getElementById("highCount").innerText=high;
+document.getElementById("mediumCount").innerText=medium;
+document.getElementById("lowCount").innerText=low;
+
+reportText=`AI Code Review Report
+
+Language: ${language}
+
+Total Issues: ${total}
+Critical: ${critical}
+High: ${high}
+Medium: ${medium}
+Low: ${low}
+
+Health Score: ${Math.max(score,0)}/100`;
+
+document.getElementById("loading").style.display="none";
+
+},1500);
+
+}
+
+function downloadReport(){
+
+const blob=new Blob([reportText],{type:"text/plain"});
+
+const a=document.createElement("a");
+
+a.href=URL.createObjectURL(blob);
+
+a.download="AI_Code_Review_Report.txt";
+
+a.click();
+
 }
 </script>
 
